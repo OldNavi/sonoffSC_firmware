@@ -8,7 +8,6 @@
 #include "pins_arduino.h"  // for digitalPinToBitMask, etc
 #endif
 #include <inttypes.h>
-
 void initDevice(void);
 void getTempHumi(void);
 void getAdcSensorValue(void);

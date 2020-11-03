@@ -24,9 +24,11 @@ void time2Callback()
 void debugData(void)
 {
     Serial.print("temprature: ");
-    Serial.println(sensor_dev[3].temp_humi_average[0]);
+    Serial.println(sensor_dev[3].temp_pres_hum_average[0]);
     Serial.print("humidity: ");
-    Serial.println(sensor_dev[3].temp_humi_average[1]);
+    Serial.println(sensor_dev[3].temp_pres_hum_average[1]);
+    Serial.print("pressure: ");
+    Serial.println(sensor_dev[3].temp_pres_hum_average[2]);
     Serial.print("light: ");
     Serial.println(sensor_dev[1].average_value);
     Serial.print("noise: ");
@@ -39,7 +41,7 @@ void setup() {
     Serial.begin(19200);
     initDevice();
     attachInterrupt(0, interCallback, RISING);
-    MsTimer2::set(1000, time2Callback); // 500ms period
+    MsTimer2::set(2000, time2Callback); // 500ms period
     MsTimer2::start();
 }
 
@@ -59,7 +61,8 @@ void loop() {
     if(update_value_flag)
     {
         update_value_flag = false;
-        //debugData();
+//        debugData();
+//        sendData();
         uploadSensorDataToServer();
     }
 }

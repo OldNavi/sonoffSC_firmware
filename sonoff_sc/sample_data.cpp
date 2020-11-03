@@ -2,16 +2,18 @@
 #include "sample_data.h"
 #include "TimerOne.h"
 
-#include "dht11.h"
+#include "bme280.h"
 #define  AD_NUMREADINGS  (50)
 #define  NOISE_NUM    (10)
-#define  DHT11_NUMREADINGS  (5)
+#define  BME_NUMREADINGS  (5)
 #define VOLTAGE       (5.0)
 #define DUSTPIN        A1
 #define LIGHTPIN       A3
 #define MICROPHONEPIN  A2
-#define DHT11PIN       6
 
+
+
+bool metric = true;
 sensorDev sensor_dev[4];
 
 
@@ -38,9 +40,10 @@ static void initData(void)
     sensor_dev[2].total = 0;
     sensor_dev[2].pin = MICROPHONEPIN;
     sensor_dev[2].level = 0;
-    sensor_dev[3].temp_humi_total[0] = 0;
-    sensor_dev[3].temp_humi_total[1] = 0;
-    sensor_dev[3].pin = DHT11PIN;
+    sensor_dev[3].temp_pres_hum[0] = 0;
+    sensor_dev[3].temp_pres_hum[1] = 0;
+    sensor_dev[3].temp_pres_hum[2] = 0;
+    sensor_dev[3].pin = 0;
 }
 void initDevice(void)
 {
@@ -51,19 +54,23 @@ void initDevice(void)
 void getTempHumi(void)
 {
     static uint8_t readIndex = 0;
-    static int16_t DHT11_readings[2][DHT11_NUMREADINGS] = {0};
-    if(getSensorData(DHT11PIN))
+    static  float BME_Readings[3][BME_NUMREADINGS] = {0};
+    if(getSensorData())
     {
-        sensor_dev[3].temp_humi_total[0] -= DHT11_readings[0][readIndex];
-        sensor_dev[3].temp_humi_total[1] -= DHT11_readings[1][readIndex];
-        DHT11_readings[0][readIndex] = dht_temperature;
-        DHT11_readings[1][readIndex] = dht_humidity;
-        sensor_dev[3].temp_humi_total[0] += DHT11_readings[0][readIndex];
-        sensor_dev[3].temp_humi_total[1] += DHT11_readings[1][readIndex];
-        sensor_dev[3].temp_humi_average[0] = sensor_dev[3].temp_humi_total[0] / DHT11_NUMREADINGS;
-        sensor_dev[3].temp_humi_average[1] = sensor_dev[3].temp_humi_total[1] / DHT11_NUMREADINGS;
+        sensor_dev[3].temp_pres_hum[0] -= BME_Readings[0][readIndex];
+        sensor_dev[3].temp_pres_hum[1] -= BME_Readings[1][readIndex];
+        sensor_dev[3].temp_pres_hum[2] -= BME_Readings[2][readIndex];
+        BME_Readings[0][readIndex] = bme_temperature;
+        BME_Readings[1][readIndex] = bme_humidity;
+        BME_Readings[2][readIndex] = bme_pressure;
+        sensor_dev[3].temp_pres_hum[0] += BME_Readings[0][readIndex];
+        sensor_dev[3].temp_pres_hum[1] += BME_Readings[1][readIndex];
+        sensor_dev[3].temp_pres_hum[2] += BME_Readings[2][readIndex];
+        sensor_dev[3].temp_pres_hum_average[0] = sensor_dev[3].temp_pres_hum[0] / BME_NUMREADINGS;
+        sensor_dev[3].temp_pres_hum_average[1] = sensor_dev[3].temp_pres_hum[1] / BME_NUMREADINGS;
+        sensor_dev[3].temp_pres_hum_average[2] = sensor_dev[3].temp_pres_hum[2] / BME_NUMREADINGS;
         readIndex = readIndex + 1;
-        if(readIndex >= DHT11_NUMREADINGS)
+        if(readIndex >= BME_NUMREADINGS)
         {
             readIndex = 0;
         }  

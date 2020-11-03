@@ -5,14 +5,16 @@ static bool network_status_ok  = false;
 static uint16_t upload_freq = 1800;
 static uint8_t humithreshold = 2;
 static uint8_t tempthreshold = 1;
-static int8_t last_temp_humi_average[2] = {0};
+static float last_temp_humi_average[3] = {0};
 static bool first_update = false;
 static void sendData(void)
 {
     Serial.write("AT+UPDATE=\"humidity\":");
-    Serial.print(String(sensor_dev[3].temp_humi_average[1]));
+    Serial.print(String(sensor_dev[3].temp_pres_hum_average[1]));
     Serial.write(",\"temperature\":");
-    Serial.print(String(sensor_dev[3].temp_humi_average[0]));
+    Serial.print(String(sensor_dev[3].temp_pres_hum_average[0]));
+    Serial.write(",\"pressure\":");
+    Serial.print(String(sensor_dev[3].temp_pres_hum_average[2]));
     Serial.write(",\"light\":");
     Serial.print(String(sensor_dev[1].level));
     Serial.write(",\"noise\":");
@@ -33,8 +35,10 @@ void syncData(void)
     {
         sensor_dev[i].last_level = sensor_dev[i].level;  
     }
-    last_temp_humi_average[0] = sensor_dev[3].temp_humi_average[0];
-    last_temp_humi_average[1] = sensor_dev[3].temp_humi_average[1];
+    last_temp_humi_average[0] = sensor_dev[3].temp_pres_hum_average[0];
+    last_temp_humi_average[1] = sensor_dev[3].temp_pres_hum_average[1];
+    last_temp_humi_average[2] = sensor_dev[3].temp_pres_hum_average[2];
+
 }
 void uploadSensorDataToServer(void)
 {
@@ -47,8 +51,8 @@ void uploadSensorDataToServer(void)
         sendData();
         couter = 0;
     }
-    else if(network_status_ok && (abs(sensor_dev[3].temp_humi_average[0] - last_temp_humi_average[0]) >= tempthreshold
-          || abs(sensor_dev[3].temp_humi_average[1] - last_temp_humi_average[1]) >= humithreshold
+    else if(network_status_ok && (abs(sensor_dev[3].temp_pres_hum_average[0] - last_temp_humi_average[0]) >= tempthreshold
+          || abs(sensor_dev[3].temp_pres_hum_average[1] - last_temp_humi_average[1]) >= humithreshold
           || sensor_dev[0].level != sensor_dev[0].last_level
           || sensor_dev[1].level != sensor_dev[1].last_level
           || sensor_dev[2].level != sensor_dev[2].last_level
