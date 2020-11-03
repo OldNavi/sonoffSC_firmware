@@ -40,9 +40,6 @@ static void initData(void)
     sensor_dev[2].total = 0;
     sensor_dev[2].pin = MICROPHONEPIN;
     sensor_dev[2].level = 0;
-    sensor_dev[3].temp_pres_hum[0] = 0;
-    sensor_dev[3].temp_pres_hum[1] = 0;
-    sensor_dev[3].temp_pres_hum[2] = 0;
     sensor_dev[3].pin = 0;
 }
 void initDevice(void)
@@ -53,27 +50,12 @@ void initDevice(void)
 }
 void getTempHumi(void)
 {
-    static uint8_t readIndex = 0;
-    static  float BME_Readings[3][BME_NUMREADINGS] = {0};
+
     if(getSensorData())
     {
-        sensor_dev[3].temp_pres_hum[0] -= BME_Readings[0][readIndex];
-        sensor_dev[3].temp_pres_hum[1] -= BME_Readings[1][readIndex];
-        sensor_dev[3].temp_pres_hum[2] -= BME_Readings[2][readIndex];
-        BME_Readings[0][readIndex] = bme_temperature;
-        BME_Readings[1][readIndex] = bme_humidity;
-        BME_Readings[2][readIndex] = bme_pressure;
-        sensor_dev[3].temp_pres_hum[0] += BME_Readings[0][readIndex];
-        sensor_dev[3].temp_pres_hum[1] += BME_Readings[1][readIndex];
-        sensor_dev[3].temp_pres_hum[2] += BME_Readings[2][readIndex];
-        sensor_dev[3].temp_pres_hum_average[0] = sensor_dev[3].temp_pres_hum[0] / BME_NUMREADINGS;
-        sensor_dev[3].temp_pres_hum_average[1] = sensor_dev[3].temp_pres_hum[1] / BME_NUMREADINGS;
-        sensor_dev[3].temp_pres_hum_average[2] = sensor_dev[3].temp_pres_hum[2] / BME_NUMREADINGS;
-        readIndex = readIndex + 1;
-        if(readIndex >= BME_NUMREADINGS)
-        {
-            readIndex = 0;
-        }  
+        sensor_dev[3].temp_pres_hum_average[0] = bme_temperature;
+        sensor_dev[3].temp_pres_hum_average[1] = bme_humidity;
+        sensor_dev[3].temp_pres_hum_average[2] = bme_pressure;
     }
     else
     {
@@ -95,7 +77,6 @@ void getAdcSensorValue(void)
         AD_readings[i][readIndex] = analogRead(sensor_dev[i].pin);
         sensor_dev[i].total = AD_readings[i][readIndex] + sensor_dev[i].total;
         sensor_dev[i].average_value = sensor_dev[i].total / AD_NUMREADINGS;
-//        sensor_dev[i].voltage_value = sensor_dev[i].average_value * (VOLTAGE / 1023.0);
     }
     sensor_dev[1].level = (sensor_dev[1].average_value > 999)?(10):(sensor_dev[1].average_value / 100 + 1);
     sensor_dev[0].level = (sensor_dev[0].average_value > 799)?(10):(sensor_dev[0].average_value / 80 + 1);
@@ -116,7 +97,6 @@ void getAdcSensorValue(void)
         sensor_dev[2].total = noise_readings[noise_index] + sensor_dev[2].total;
         sensor_dev[2].average_value =  sensor_dev[2].total / NOISE_NUM;
         sensor_dev[2].level = (sensor_dev[2].average_value > 999)?(10):(sensor_dev[2].average_value / 100 + 1);
-//        sensor_dev[2].voltage_value = sensor_dev[2].average_value * (VOLTAGE / 1023.0);
         noise_index = noise_index + 1;
         readIndex = 0;
         noise_max = -1;
