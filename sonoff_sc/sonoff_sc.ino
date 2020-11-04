@@ -61,8 +61,7 @@ void loop() {
     if(update_value_flag)
     {
         update_value_flag = false;
-//        debugData();
-//        sendData();
+    //    debugData();
         uploadSensorDataToServer();
     }
 }

@@ -13,6 +13,7 @@ bool getSensorData()
 
   if(!initComplete) {
     initComplete = bme.begin();
+      return false;
   }
    BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
    BME280::PresUnit presUnit(BME280::PresUnit_hPa);
