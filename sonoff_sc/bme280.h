@@ -1,7 +1,7 @@
 #ifndef  _DHT11_H_
 #define  _DHT11_H_
 #include "global.h"
-#include <BME280SpiSw.h>
+#include <BME280Spi.h>
 #define CHIP_SELECT_PIN 6
 #define MOSI_PIN 11
 #define MISO_PIN 12

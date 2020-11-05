@@ -39,6 +39,7 @@ void debugData(void)
 void setup() {
   // put your setup code here, to run once:
     Serial.begin(19200);
+    SPI.begin();
     initDevice();
     attachInterrupt(0, interCallback, RISING);
     MsTimer2::set(2000, time2Callback); // 500ms period
@@ -61,7 +62,7 @@ void loop() {
     if(update_value_flag)
     {
         update_value_flag = false;
-    //    debugData();
+        // debugData();
         uploadSensorDataToServer();
     }
 }

@@ -8,6 +8,7 @@
 #include "pins_arduino.h"  // for digitalPinToBitMask, etc
 #endif
 #include <inttypes.h>
+#include <SPI.h>
 
 
 typedef struct _sensorDev

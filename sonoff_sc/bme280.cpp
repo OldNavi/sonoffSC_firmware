@@ -5,8 +5,8 @@ static float bme_humidity;
 static float bme_pressure;
 
 static bool initComplete = false;
-BME280SpiSw::Settings settings(CHIP_SELECT_PIN, MOSI_PIN, MISO_PIN, SCK_PIN, BME280::OSR_X2, BME280::OSR_X1, BME280::OSR_X4, BME280::Mode_Normal, BME280::StandbyTime_500us,BME280::Filter_4);
-BME280SpiSw bme(settings);
+BME280Spi::Settings settings(CHIP_SELECT_PIN,BME280::OSR_X16, BME280::OSR_X16, BME280::OSR_X16, BME280::Mode_Forced, BME280::StandbyTime_500us,BME280::Filter_16);
+BME280Spi bme(settings);
 
 bool getSensorData()
 {
